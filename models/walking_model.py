@@ -4,38 +4,37 @@ from __future__ import annotations
 from typing import Optional
 
 import torch
-import torch.nn as nn
 
 from models.base_model import ActionOutput, BaseSLM
 from utils.registry import register
-
-
-def _simple_cnn(in_channels: int, hidden_dim: int) -> nn.Sequential:
-    """Lightweight fallback CNN backbone."""
-    return nn.Sequential(
-        nn.Conv2d(in_channels, 32, 5, stride=2, padding=2),
-        nn.ReLU(),
-        nn.Conv2d(32, 64, 3, stride=2, padding=1),
-        nn.ReLU(),
-        nn.Conv2d(64, 128, 3, stride=2, padding=1),
-        nn.ReLU(),
-        nn.AdaptiveAvgPool2d(1),
-        nn.Flatten(),
-        nn.Linear(128, hidden_dim),
-        nn.ReLU(),
-    )
 
 
 @register("models", "walking")
 class WalkingSLM(BaseSLM):
     """Mode-specific SLM for on-foot walking, running, and combat."""
 
-    def build_backbone(self, backbone: str, **kwargs) -> nn.Module:
-        in_channels = kwargs.get("frame_stack", 4) * 3  # RGB * stack
-        if backbone == "custom_cnn":
-            return _simple_cnn(in_channels, self.hidden_dim)
-        # TODO: integrate timm backbones (mobilevit, efficientvit, tinyvit)
-        return _simple_cnn(in_channels, self.hidden_dim)
+    def __init__(
+        self,
+        backbone: str = "custom_cnn",
+        binary_dim: int = 12,
+        continuous_dim: int = 2,
+        hidden_dim: int = 256,
+        frame_stack: int = 4,
+        pretrained: bool = False,
+        img_size: int = 224,
+        **kwargs,
+    ):
+        super().__init__(
+            mode="walking",
+            binary_dim=binary_dim,
+            continuous_dim=continuous_dim,
+            hidden_dim=hidden_dim,
+            backbone=backbone,
+            frame_stack=frame_stack,
+            pretrained=pretrained,
+            img_size=img_size,
+            **kwargs,
+        )
 
     def forward(
         self,

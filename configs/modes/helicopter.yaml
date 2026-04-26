@@ -1,5 +1,5 @@
 mode: helicopter
-description: "Helicopter / rotary-wing piloting mode"
+description: "Helicopter piloting mode"
 
 observation:
   frame_width: 320
@@ -18,16 +18,21 @@ action_space:
     - { name: D, type: binary, description: "Yaw right" }
     - { name: NUM4, type: binary, description: "Roll left" }
     - { name: NUM6, type: binary, description: "Roll right" }
-    - { name: SPACE, type: binary, description: "Ascend / Increase altitude" }
-    - { name: CTRL, type: binary, description: "Descend / Decrease altitude" }
-    - { name: E, type: binary, description: "Exit aircraft" }
+    - { name: NUM8, type: binary, description: "Increase altitude / Throttle up" }
+    - { name: NUM5, type: binary, description: "Decrease altitude / Throttle down" }
+    - { name: SPACE, type: binary, description: "Emergency brake / Stabilise" }
+    - { name: SHIFT, type: binary, description: "Speed boost" }
+    - { name: E, type: binary, description: "Exit helicopter" }
   mouse:
-    dx: { type: continuous, range: [-60, 60], description: "Camera / Yaw" }
-    dy: { type: continuous, range: [-60, 60], description: "Camera / Pitch" }
+    dx: { type: continuous, range: [-60, 60], description: "Camera / yaw assist" }
+    dy: { type: continuous, range: [-60, 60], description: "Camera / pitch assist" }
     left_click: { type: binary, description: "Fire weapon" }
 
 model:
-  backbone: efficientvit
+  backbone_type: custom_cnn
+  supported_backbones: [custom_cnn, mobilevit, efficientvit, tinyvit]
+  pretrained: false
+  img_size: 224
   hidden_dim: 320
   num_heads: 8
   dropout: 0.1

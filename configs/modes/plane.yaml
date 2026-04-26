@@ -27,7 +27,10 @@ action_space:
     left_click: { type: binary, description: "Fire weapon" }
 
 model:
-  backbone: efficientvit
+  backbone_type: custom_cnn
+  supported_backbones: [custom_cnn, mobilevit, efficientvit, tinyvit]
+  pretrained: false
+  img_size: 224
   hidden_dim: 320
   num_heads: 8
   dropout: 0.1

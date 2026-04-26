@@ -1,0 +1,35 @@
+mode: helicopter
+description: "Helicopter / rotary-wing piloting mode"
+
+observation:
+  frame_width: 320
+  frame_height: 180
+  frame_stack: 6
+  color_mode: rgb
+  extra_crops:
+    minimap: [10, 700, 210, 900]
+    altitude_hud: [5, 350, 40, 450]
+
+action_space:
+  keys:
+    - { name: W, type: binary, description: "Pitch forward" }
+    - { name: S, type: binary, description: "Pitch backward" }
+    - { name: A, type: binary, description: "Yaw left" }
+    - { name: D, type: binary, description: "Yaw right" }
+    - { name: NUM4, type: binary, description: "Roll left" }
+    - { name: NUM6, type: binary, description: "Roll right" }
+    - { name: SPACE, type: binary, description: "Ascend / Increase altitude" }
+    - { name: CTRL, type: binary, description: "Descend / Decrease altitude" }
+    - { name: E, type: binary, description: "Exit aircraft" }
+  mouse:
+    dx: { type: continuous, range: [-60, 60], description: "Camera / Yaw" }
+    dy: { type: continuous, range: [-60, 60], description: "Camera / Pitch" }
+    left_click: { type: binary, description: "Fire weapon" }
+
+model:
+  backbone: efficientvit
+  hidden_dim: 320
+  num_heads: 8
+  dropout: 0.1
+  context_type: transformer
+  context_window: 8

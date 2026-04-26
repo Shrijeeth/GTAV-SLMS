@@ -1,0 +1,31 @@
+mode: car
+description: "Car / sedan / SUV driving mode"
+
+observation:
+  frame_width: 320
+  frame_height: 180
+  frame_stack: 4
+  color_mode: rgb
+  extra_crops:
+    minimap: [10, 700, 210, 900]
+    speedometer: [650, 50, 700, 200]
+
+action_space:
+  keys:
+    - { name: W, type: binary, description: "Accelerate" }
+    - { name: S, type: binary, description: "Brake / Reverse" }
+    - { name: A, type: binary, description: "Steer left" }
+    - { name: D, type: binary, description: "Steer right" }
+    - { name: SPACE, type: binary, description: "Handbrake" }
+    - { name: E, type: binary, description: "Exit vehicle" }
+  mouse:
+    dx: { type: continuous, range: [-50, 50], description: "Camera / Steer X" }
+    dy: { type: continuous, range: [-30, 30], description: "Camera Y" }
+    left_click: { type: binary, description: "Drive-by shoot" }
+
+model:
+  backbone: mobilevit
+  hidden_dim: 256
+  num_heads: 4
+  dropout: 0.1
+  context_type: lstm

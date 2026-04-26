@@ -1,0 +1,36 @@
+mode: walking
+description: "On-foot walking/running/combat mode"
+
+observation:
+  frame_width: 320
+  frame_height: 180
+  frame_stack: 4
+  color_mode: rgb          # rgb | grayscale
+  extra_crops:
+    minimap: [10, 700, 210, 900]   # [y1, x1, y2, x2] approximate
+    health_bar: [680, 100, 700, 300]
+
+action_space:
+  keys:
+    - { name: W, type: binary, description: "Move forward" }
+    - { name: A, type: binary, description: "Move left" }
+    - { name: S, type: binary, description: "Move backward" }
+    - { name: D, type: binary, description: "Move right" }
+    - { name: SPACE, type: binary, description: "Jump" }
+    - { name: SHIFT, type: binary, description: "Sprint" }
+    - { name: CTRL, type: binary, description: "Crouch / Stealth" }
+    - { name: E, type: binary, description: "Enter vehicle / Interact" }
+    - { name: F, type: binary, description: "Melee / Alt interact" }
+    - { name: R, type: binary, description: "Reload" }
+  mouse:
+    dx: { type: continuous, range: [-50, 50], description: "Mouse X delta" }
+    dy: { type: continuous, range: [-50, 50], description: "Mouse Y delta" }
+    left_click: { type: binary, description: "Shoot / Punch" }
+    right_click: { type: binary, description: "Aim" }
+
+model:
+  backbone: tinyvit       # tinyvit | mobilevit | efficientvit | custom_cnn
+  hidden_dim: 256
+  num_heads: 4
+  dropout: 0.1
+  context_type: frame_stack  # frame_stack | lstm | gru | transformer

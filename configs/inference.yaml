@@ -1,0 +1,19 @@
+inference:
+  target_fps: 15
+  auto_detect_mode: true
+  default_mode: car
+  device: cuda               # cuda | cpu
+  precision: fp16             # fp32 | fp16 | int8
+  use_onnx: false
+  toggle_key: F9             # key to toggle AI on/off
+  exit_key: F10              # key to stop inference
+
+screen_capture:
+  backend: mss               # mss | dxcam
+  monitor: 1
+  region: null               # null = full screen, or [x, y, w, h]
+
+action_executor:
+  backend: pynput
+  key_hold_ms: 50
+  mouse_smoothing: true

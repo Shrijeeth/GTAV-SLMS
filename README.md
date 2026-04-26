@@ -19,15 +19,15 @@ The pipeline:
 
 ```
 ┌─────────────┐   frames    ┌────────────────┐   actions   ┌──────────────┐
-│  GTA V Game  │ ──────────► │  Mode Detector  │ ──────────► │  Mode Router  │
-│  (Screen)    │             │  (HUD Analysis) │             │              │
+│  GTA V Game │ ──────────► │  Mode Detector │ ──────────► │  Mode Router │
+│  (Screen)   │             │  (HUD Analysis)│             │              │
 └─────────────┘             └────────────────┘             └──────┬───────┘
                                                                   │
                      ┌────────────────────────────────────────────┤
                      ▼              ▼              ▼              ▼
               ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
-              │  Walking  │  │   Car    │  │  Bike /  │  │  Plane / │
-              │   Model   │  │  Model   │  │ Motor.   │  │  Heli    │
+              │  Walking │  │   Car    │  │  Bike /  │  │  Plane / │
+              │   Model  │  │  Model   │  │ Motor.   │  │  Heli    │
               └──────────┘  └──────────┘  └──────────┘  └──────────┘
                      │              │              │              │
                      └──────────────┴──────────────┴──────────────┘

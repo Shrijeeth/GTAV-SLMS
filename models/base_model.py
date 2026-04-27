@@ -8,7 +8,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
-from models.backbone_factory import create_backbone, SUPPORTED_BACKBONES
+from models.backbone_factory import create_backbone
 
 
 @dataclass
@@ -34,6 +34,7 @@ class BaseSLM(nn.Module, ABC):
         hidden_dim: int = 256,
         backbone: str = "custom_cnn",
         frame_stack: int = 4,
+        channels_per_frame: int = 3,
         pretrained: bool = False,
         img_size: int = 224,
         **kwargs,
@@ -45,8 +46,9 @@ class BaseSLM(nn.Module, ABC):
         self.hidden_dim = hidden_dim
         self.backbone_name = backbone
         self.frame_stack = frame_stack
+        self.channels_per_frame = channels_per_frame
 
-        in_channels = frame_stack * 3  # RGB * stack
+        in_channels = frame_stack * channels_per_frame
 
         self.encoder = create_backbone(
             backbone_type=backbone,

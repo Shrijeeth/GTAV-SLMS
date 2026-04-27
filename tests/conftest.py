@@ -1,12 +1,6 @@
 """Shared pytest fixtures for GTA V SLM tests."""
-import sys
-import os
-
 import pytest
 import torch
-
-# Ensure project root is importable
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 BACKBONE_TYPES = ["custom_cnn", "mobilevit", "efficientvit", "tinyvit"]

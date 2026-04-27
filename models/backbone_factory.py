@@ -8,7 +8,7 @@ Supported backbone types:
 """
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -35,13 +35,16 @@ def get_timm_model_name(backbone_type: str) -> Optional[str]:
 
 
 def _simple_cnn(in_channels: int, hidden_dim: int) -> nn.Sequential:
-    """Lightweight 3-conv CNN ending in (B, hidden_dim)."""
+    """Lightweight 3-conv CNN with BatchNorm, ending in (B, hidden_dim)."""
     return nn.Sequential(
         nn.Conv2d(in_channels, 32, 5, stride=2, padding=2),
+        nn.BatchNorm2d(32),
         nn.ReLU(),
         nn.Conv2d(32, 64, 3, stride=2, padding=1),
+        nn.BatchNorm2d(64),
         nn.ReLU(),
         nn.Conv2d(64, 128, 3, stride=2, padding=1),
+        nn.BatchNorm2d(128),
         nn.ReLU(),
         nn.AdaptiveAvgPool2d(1),
         nn.Flatten(),
@@ -53,8 +56,9 @@ def _simple_cnn(in_channels: int, hidden_dim: int) -> nn.Sequential:
 def _infer_timm_feature_dim(
     model: nn.Module, in_channels: int = 3, img_size: int = 224,
 ) -> int:
-    """Run a dummy forward pass to discover the timm backbone\'s output dim."""
-    dummy = torch.zeros(1, in_channels, img_size, img_size)
+    """Run a dummy forward pass to discover the timm backbone's output dim."""
+    device = next(model.parameters()).device
+    dummy = torch.zeros(1, in_channels, img_size, img_size, device=device)
     with torch.no_grad():
         out = model(dummy)
     return out.shape[-1]

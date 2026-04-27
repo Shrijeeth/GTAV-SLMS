@@ -1,7 +1,5 @@
 """Dynamic registry for models, modes, and components."""
 from __future__ import annotations
-
-import importlib
 from typing import Any, Callable, Dict
 
 _REGISTRIES: Dict[str, Dict[str, Any]] = {}
@@ -39,6 +37,10 @@ def create_model(
 ) -> Any:
     """Dynamically create a mode-specific model with the given backbone.
 
+    Uses the ``"models"`` registry namespace populated by ``@register``
+    decorators on each mode model class. Importing ``models`` ensures all
+    decorators have fired.
+
     Parameters
     ----------
     mode : str
@@ -52,19 +54,18 @@ def create_model(
     -------
     BaseSLM
         Instantiated mode-specific model.
+
+    Raises
+    ------
+    ValueError
+        If *mode* is not registered.
     """
-    _MODEL_MAP = {
-        "walking":    "models.walking_model.WalkingSLM",
-        "car":        "models.car_model.CarSLM",
-        "bike":       "models.bike_model.BikeSLM",
-        "plane":      "models.plane_model.PlaneSLM",
-        "helicopter": "models.helicopter_model.HelicopterSLM",
-    }
-    if mode not in _MODEL_MAP:
+    import models  # noqa: F401 — ensure @register decorators fire
+
+    try:
+        model_class = get("models", mode)
+    except KeyError:
         raise ValueError(
-            f"Unknown mode: {mode!r}. Supported: {list(_MODEL_MAP.keys())}"
+            f"Unknown mode: {mode!r}. Supported: {list_registered('models')}"
         )
-    module_path, class_name = _MODEL_MAP[mode].rsplit(".", 1)
-    module = importlib.import_module(module_path)
-    model_class = getattr(module, class_name)
     return model_class(backbone=backbone_type, **kwargs)

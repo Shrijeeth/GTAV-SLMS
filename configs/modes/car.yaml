@@ -1,5 +1,5 @@
 mode: car
-description: "Car / sedan / SUV driving mode"
+description: "Car/sedan/SUV driving mode"
 
 observation:
   frame_width: 320
@@ -8,7 +8,7 @@ observation:
   color_mode: rgb
   extra_crops:
     minimap: [10, 700, 210, 900]
-    speedometer: [650, 50, 700, 200]
+    speed_hud: [650, 700, 690, 850]
 
 action_space:
   keys:
@@ -17,15 +17,20 @@ action_space:
     - { name: A, type: binary, description: "Steer left" }
     - { name: D, type: binary, description: "Steer right" }
     - { name: SPACE, type: binary, description: "Handbrake" }
+    - { name: SHIFT, type: binary, description: "Turbo / Nitro (if available)" }
     - { name: E, type: binary, description: "Exit vehicle" }
+    - { name: Q, type: binary, description: "Special ability" }
+    - { name: H, type: binary, description: "Horn" }
   mouse:
-    dx: { type: continuous, range: [-50, 50], description: "Camera / Steer X" }
-    dy: { type: continuous, range: [-30, 30], description: "Camera Y" }
-    left_click: { type: binary, description: "Drive-by shoot" }
+    dx: { type: continuous, range: [-40, 40], description: "Camera X pan" }
+    dy: { type: continuous, range: [-40, 40], description: "Camera Y pan" }
 
 model:
-  backbone: mobilevit
+  backbone_type: custom_cnn
+  supported_backbones: [custom_cnn, mobilevit, efficientvit, tinyvit]
+  pretrained: false
+  img_size: 224
   hidden_dim: 256
   num_heads: 4
   dropout: 0.1
-  context_type: lstm
+  context_type: frame_stack

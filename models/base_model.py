@@ -8,6 +8,8 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
+from models.backbone_factory import create_backbone
+
 
 @dataclass
 class ActionOutput:
@@ -19,36 +21,60 @@ class ActionOutput:
 class BaseSLM(nn.Module, ABC):
     """Abstract base for all mode-specific SLMs.
 
-    Subclasses must implement ``build_backbone`` and ``forward``.
+    The backbone is created via :func:`models.backbone_factory.create_backbone`
+    which supports ``custom_cnn``, ``mobilevit``, ``efficientvit``, and
+    ``tinyvit``.  Subclasses only need to implement ``forward``.
     """
 
-    def __init__(self, mode: str, binary_dim: int, continuous_dim: int,
-                 hidden_dim: int = 256, backbone: str = "custom_cnn",
-                 **kwargs):
+    def __init__(
+        self,
+        mode: str,
+        binary_dim: int,
+        continuous_dim: int,
+        hidden_dim: int = 256,
+        backbone: str = "custom_cnn",
+        frame_stack: int = 4,
+        channels_per_frame: int = 3,
+        pretrained: bool = False,
+        img_size: int = 224,
+        **kwargs,
+    ):
         super().__init__()
         self.mode = mode
         self.binary_dim = binary_dim
         self.continuous_dim = continuous_dim
         self.hidden_dim = hidden_dim
         self.backbone_name = backbone
+        self.frame_stack = frame_stack
+        self.channels_per_frame = channels_per_frame
 
-        self.encoder = self.build_backbone(backbone, **kwargs)
+        in_channels = frame_stack * channels_per_frame
+
+        self.encoder = create_backbone(
+            backbone_type=backbone,
+            hidden_dim=hidden_dim,
+            in_channels=in_channels,
+            pretrained=pretrained,
+            img_size=img_size,
+        )
+
         self.binary_head = nn.Linear(hidden_dim, binary_dim)
         self.continuous_head = nn.Linear(hidden_dim, continuous_dim)
 
     @abstractmethod
-    def build_backbone(self, backbone: str, **kwargs) -> nn.Module:
-        """Return a feature extractor that maps frames -> (B, hidden_dim)."""
-        ...
-
-    @abstractmethod
-    def forward(self, frames: torch.Tensor,
-                context: Optional[torch.Tensor] = None) -> ActionOutput:
+    def forward(
+        self,
+        frames: torch.Tensor,
+        context: Optional[torch.Tensor] = None,
+    ) -> ActionOutput:
         """Produce actions from stacked frames and optional context."""
         ...
 
-    def predict(self, frames: torch.Tensor,
-                context: Optional[torch.Tensor] = None) -> dict:
+    def predict(
+        self,
+        frames: torch.Tensor,
+        context: Optional[torch.Tensor] = None,
+    ) -> dict:
         """Convenience wrapper returning numpy-friendly dict."""
         self.eval()
         with torch.no_grad():

@@ -5,9 +5,9 @@ observation:
   frame_width: 320
   frame_height: 180
   frame_stack: 4
-  color_mode: rgb          # rgb | grayscale
+  color_mode: rgb
   extra_crops:
-    minimap: [10, 700, 210, 900]   # [y1, x1, y2, x2] approximate
+    minimap: [10, 700, 210, 900]
     health_bar: [680, 100, 700, 300]
 
 action_space:
@@ -29,8 +29,11 @@ action_space:
     right_click: { type: binary, description: "Aim" }
 
 model:
-  backbone: tinyvit       # tinyvit | mobilevit | efficientvit | custom_cnn
+  backbone_type: custom_cnn
+  supported_backbones: [custom_cnn, mobilevit, efficientvit, tinyvit]
+  pretrained: false
+  img_size: 224
   hidden_dim: 256
   num_heads: 4
   dropout: 0.1
-  context_type: frame_stack  # frame_stack | lstm | gru | transformer
+  context_type: frame_stack
